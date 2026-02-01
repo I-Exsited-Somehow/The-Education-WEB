@@ -1,0 +1,199 @@
+
+import React, { useState, useMemo, useEffect } from 'react';
+import { Game, GameCategory, GameData } from './types.ts';
+import Navbar from './components/Navbar.tsx';
+import GameCard from './components/GameCard.tsx';
+import GameOverlay from './components/GameOverlay.tsx';
+
+const App: React.FC = () => {
+  const [games, setGames] = useState<Game[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<GameCategory>(GameCategory.ALL);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeGame, setActiveGame] = useState<Game | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch games from JSON file
+  useEffect(() => {
+    fetch('./games.json')
+      .then(res => res.json())
+      .then((data: GameData) => {
+        setGames(data.games);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error loading games:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  // Filtering logic
+  const filteredGames = useMemo(() => {
+    return games.filter(game => {
+      const matchesCategory = selectedCategory === GameCategory.ALL || game.category === selectedCategory;
+      const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           game.category.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [games, selectedCategory, searchQuery]);
+
+  // Featured games
+  const featuredGames = useMemo(() => games.filter(g => g.isPopular), [games]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
+          <p className="text-zinc-500 font-medium animate-pulse">Loading Zenith Games...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar 
+        onHomeClick={() => {
+          setSelectedCategory(GameCategory.ALL);
+          setSearchQuery('');
+          setActiveGame(null);
+        }}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
+
+      <main className="flex-1 container mx-auto px-6 py-8">
+        {/* Banner Area */}
+        {!searchQuery && selectedCategory === GameCategory.ALL && (
+          <section className="mb-12 relative overflow-hidden rounded-3xl bg-indigo-950 p-8 md:p-12">
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-indigo-500/20 blur-[120px] rounded-full"></div>
+            <div className="relative z-10 max-w-2xl">
+              <span className="text-indigo-400 text-sm font-bold tracking-widest uppercase mb-4 block">Welcome to Zenith</span>
+              <h1 className="text-4xl md:text-6xl font-black font-outfit mb-6 text-white leading-tight">
+                Premium Unblocked <br/>
+                <span className="text-indigo-500">Gaming Experience.</span>
+              </h1>
+              <p className="text-zinc-400 text-lg mb-8 leading-relaxed">
+                Enjoy a curated collection of high-quality browser games without any restrictions. 
+                Fast, responsive, and completely free to play.
+              </p>
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => {
+                    const scrollTarget = document.getElementById('game-grid');
+                    scrollTarget?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.4)]"
+                >
+                  Start Playing
+                </button>
+                <button className="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl transition-all">
+                  Join Discord
+                </button>
+              </div>
+            </div>
+            <div className="absolute bottom-0 right-0 hidden lg:block mr-12 -mb-8">
+              <div className="flex gap-4 opacity-40">
+                {featuredGames.slice(0, 3).map((game) => (
+                  <div key={`featured-${game.id}`} className="w-48 aspect-video rounded-xl border border-zinc-700 overflow-hidden transform rotate-12 -translate-y-4 shadow-2xl">
+                    <img src={game.thumbnail} className="w-full h-full object-cover" alt="" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Categories Scroller */}
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-6 sticky top-[81px] bg-zinc-950/80 backdrop-blur-md z-40 py-2">
+          {Object.values(GameCategory).map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all border ${
+                selectedCategory === category 
+                  ? 'bg-indigo-600 border-indigo-500 text-white' 
+                  : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        {/* Game Grid */}
+        <section id="game-grid" className="mt-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold font-outfit text-white">
+              {searchQuery ? `Search Results for "${searchQuery}"` : `${selectedCategory} Games`}
+            </h2>
+            <span className="text-zinc-500 text-sm font-medium">
+              Showing {filteredGames.length} games
+            </span>
+          </div>
+
+          {filteredGames.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {filteredGames.map((game) => (
+                <GameCard 
+                  key={game.id} 
+                  game={game} 
+                  onClick={setActiveGame}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center mb-4 text-zinc-700">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-zinc-300">No games found</h3>
+              <p className="text-zinc-500 max-w-xs mt-2">We couldn't find any games matching your current filter or search criteria.</p>
+              <button 
+                onClick={() => {
+                  setSelectedCategory(GameCategory.ALL);
+                  setSearchQuery('');
+                }}
+                className="mt-6 text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
+              >
+                Clear all filters
+              </button>
+            </div>
+          )}
+        </section>
+
+        {/* Footer */}
+        <footer className="mt-20 pt-12 border-t border-zinc-900 pb-8 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col items-center md:items-start gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-zinc-700 rounded flex items-center justify-center">
+                 <div className="w-3 h-3 bg-white rounded-full"></div>
+              </div>
+              <span className="font-bold font-outfit tracking-wider text-zinc-400">ZENITH PORTAL</span>
+            </div>
+            <p className="text-zinc-600 text-[10px] uppercase tracking-widest">© 2024 ZENITH UNBLOCKED. ALL RIGHTS RESERVED.</p>
+          </div>
+          
+          <div className="flex gap-8 text-sm font-medium text-zinc-500">
+            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-white transition-colors">Contact</a>
+            <a href="#" className="hover:text-white transition-colors">DMCA</a>
+          </div>
+        </footer>
+      </main>
+
+      {/* Game Overlay */}
+      {activeGame && (
+        <GameOverlay 
+          game={activeGame} 
+          onClose={() => setActiveGame(null)} 
+        />
+      )}
+    </div>
+  );
+};
+
+export default App;
