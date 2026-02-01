@@ -1,0 +1,77 @@
+
+{
+  "games": [
+    {
+      "id": "1",
+      "title": "Retro Pacman",
+      "thumbnail": "https://picsum.photos/seed/pac/400/300",
+      "iframeUrl": "https://www.google.com/logos/2010/pacman10-i.html",
+      "category": "Classic",
+      "description": "Experience the legendary arcade game in your browser. Eat dots and avoid ghosts!",
+      "isPopular": true
+    },
+    {
+      "id": "2",
+      "title": "2048 Puzzle",
+      "thumbnail": "https://picsum.photos/seed/2048/400/300",
+      "iframeUrl": "https://play2048.co/",
+      "category": "Puzzle",
+      "description": "Join the numbers and get to the 2048 tile!",
+      "isPopular": true
+    },
+    {
+      "id": "3",
+      "title": "HexGL",
+      "thumbnail": "https://picsum.photos/seed/hex/400/300",
+      "iframeUrl": "http://hexgl.bkcore.com/play/",
+      "category": "Driving",
+      "description": "A high-speed futuristic racing game built with HTML5.",
+      "isPopular": true
+    },
+    {
+      "id": "4",
+      "title": "Doodle Jump",
+      "thumbnail": "https://picsum.photos/seed/jump/400/300",
+      "iframeUrl": "https://doodlejump.io/",
+      "category": "Arcade",
+      "description": "Jump from platform to platform in this addictive vertical scroller.",
+      "isPopular": false
+    },
+    {
+      "id": "5",
+      "title": "Crossy Road",
+      "thumbnail": "https://picsum.photos/seed/crossy/400/300",
+      "iframeUrl": "https://crossyroad.io/",
+      "category": "Arcade",
+      "description": "Why did the chicken cross the road? Find out in this endless runner.",
+      "isPopular": true
+    },
+    {
+      "id": "6",
+      "title": "Cut the Rope",
+      "thumbnail": "https://picsum.photos/seed/cut/400/300",
+      "iframeUrl": "https://www.gamepix.com/play/cut-the-rope",
+      "category": "Puzzle",
+      "description": "Feed candy to Om Nom by cutting the ropes in clever ways.",
+      "isPopular": false
+    },
+    {
+      "id": "7",
+      "title": "Paper.io 2",
+      "thumbnail": "https://picsum.photos/seed/paper/400/300",
+      "iframeUrl": "https://paper-io.com/",
+      "category": "Action",
+      "description": "Capture as much territory as possible and defeat your enemies.",
+      "isPopular": true
+    },
+    {
+      "id": "8",
+      "title": "Tower Defense",
+      "thumbnail": "https://picsum.photos/seed/tower/400/300",
+      "iframeUrl": "https://www.silvergames.com/en/tower-defense",
+      "category": "Action",
+      "description": "Protect your base from incoming waves of enemies using strategic towers.",
+      "isPopular": false
+    }
+  ]
+}
