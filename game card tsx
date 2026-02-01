@@ -1,0 +1,49 @@
+
+import React from 'react';
+import { Game } from '../types';
+
+interface GameCardProps {
+  game: Game;
+  onClick: (game: Game) => void;
+}
+
+const GameCard: React.FC<GameCardProps> = ({ game, onClick }) => {
+  return (
+    <div 
+      onClick={() => onClick(game)}
+      className="group relative bg-zinc-900 rounded-xl overflow-hidden cursor-pointer border border-zinc-800 hover:border-indigo-500/50 transition-all hover:-translate-y-1 shadow-lg"
+    >
+      <div className="aspect-video w-full overflow-hidden relative">
+        <img 
+          src={game.thumbnail} 
+          alt={game.title} 
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white transform scale-0 group-hover:scale-100 transition-transform delay-75">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        {game.isPopular && (
+          <div className="absolute top-3 left-3 px-2 py-1 bg-indigo-600 rounded text-[10px] font-bold text-white uppercase tracking-wider">
+            Popular
+          </div>
+        )}
+      </div>
+      
+      <div className="p-4">
+        <div className="flex justify-between items-start mb-1">
+          <h3 className="text-zinc-100 font-bold group-hover:text-indigo-400 transition-colors">{game.title}</h3>
+          <span className="text-[10px] font-medium text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded uppercase">
+            {game.category}
+          </span>
+        </div>
+        <p className="text-zinc-500 text-xs line-clamp-2 leading-relaxed">
+          {game.description}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default GameCard;
